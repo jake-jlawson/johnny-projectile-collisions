@@ -1,7 +1,19 @@
 import pygame
 
+from physics import parameters, state
 from player import player
-from settings import AIM_LENGTH
+from settings import AIM_LENGTH, PIXELS_PER_METER
+
+
+def world_to_screen(position):
+    """Place the projectile on screen. t = 0 sits on the launcher.
+
+    State y grows upward. Screen y grows downward, so the height is flipped.
+    """
+    initial = parameters.initial_position
+    screen_x = player.x + (position[0] - initial[0]) * PIXELS_PER_METER
+    screen_y = player.y - (position[1] - initial[1]) * PIXELS_PER_METER
+    return int(screen_x), int(screen_y)
 
 
 def render_screen(screen):
@@ -22,5 +34,8 @@ def render_screen(screen):
     pygame.draw.line(screen, (255, 255, 255), (end_x, end_y), (back_x - side_x, back_y - side_y), 3)
 
     pygame.draw.circle(screen, (255, 255, 255), (int(player.x), int(player.y)), 10)
+
+    projectile_x, projectile_y = world_to_screen(state.position)
+    pygame.draw.circle(screen, (255, 180, 40), (projectile_x, projectile_y), 8)
 
     pygame.display.flip()
